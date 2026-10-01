@@ -1,13 +1,555 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>vekrona</title>
-	<link rel="stylesheet" href="assets/css/site.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vekrona — Fedora Sway desktop for work and gaming</title>
+<meta name="description" content="vekrona is a Fedora 44 desktop on Sway and DankMaterialShell: Btrfs snapshots with one-command rollback, a macOS-style keyboard, Steam ready.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1a1b26" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f5fa" media="(prefers-color-scheme: light)">
+<link rel="canonical" href="https://vekrona.com/">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="vekrona">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="vekrona — Fedora Sway desktop for work and gaming">
+<meta property="og:description" content="Sway and DankMaterialShell on a Btrfs root that takes a snapshot before every dnf transaction, a keyboard that feels like macOS everywhere except your terminal, and Steam already wired in.">
+<meta property="og:url" content="https://vekrona.com/">
+<meta property="og:image" content="https://vekrona.com/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Blurred screenshot of the vekrona desktop behind the wordmark “vekrona” and the tagline “Fedora Sway desktop for work and gaming”.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="vekrona — Fedora Sway desktop for work and gaming">
+<meta name="twitter:description" content="Sway and DankMaterialShell on a Btrfs root that takes a snapshot before every dnf transaction, a keyboard that feels like macOS everywhere except your terminal, and Steam already wired in.">
+<meta name="twitter:image" content="https://vekrona.com/assets/img/og.png">
+<meta name="twitter:image:alt" content="Blurred screenshot of the vekrona desktop behind the wordmark “vekrona” and the tagline “Fedora Sway desktop for work and gaming”.">
+
+<link rel="preload" href="assets/fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebSite",
+			"@id": "https://vekrona.com/#website",
+			"url": "https://vekrona.com/",
+			"name": "vekrona",
+			"inLanguage": "en"
+		},
+		{
+			"@type": "SoftwareApplication",
+			"@id": "https://vekrona.com/#software",
+			"name": "vekrona",
+			"description": "vekrona is a Fedora 44 desktop on Sway and DankMaterialShell: Btrfs snapshots with one-command rollback, a macOS-style keyboard, Steam ready.",
+			"applicationCategory": "DesktopEnhancementApplication",
+			"operatingSystem": "Fedora Linux 44",
+			"url": "https://vekrona.com/",
+			"image": "https://vekrona.com/assets/img/og.png",
+			"license": "https://opensource.org/licenses/MIT",
+			"sameAs": "https://github.com/vekrona/vekrona"
+		},
+		{
+			"@type": "VideoObject",
+			"@id": "https://vekrona.com/#video",
+			"name": "vekrona in 61 seconds",
+			"description": "A silent, captioned tour of the vekrona desktop: workspaces, Spotlight, Control Center, notifications, clipboard history, keybindings help, theme cycling, the installer verify run, and the lock screen.",
+			"thumbnailUrl": "https://vekrona.com/assets/video/poster.webp",
+			"contentUrl": "https://vekrona.com/assets/video/vekrona-promo.mp4",
+			"uploadDate": "2026-10-01",
+			"duration": "PT1M1S"
+		}
+	]
+}
+</script>
 </head>
 <body>
-	<h1>vekrona</h1>
-	<p>Site under construction. For details, visit <a href="https://github.com/vekrona/vekrona">github.com/vekrona/vekrona</a>.</p>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+	<nav class="site-nav" aria-label="Main">
+		<div class="container">
+			<a class="brand" href="#top">
+				<span class="dot" aria-hidden="true"></span>
+				vekrona
+			</a>
+			<ul class="nav-links">
+				<li><a href="#overview">Overview</a></li>
+				<li><a href="#themes">Themes</a></li>
+				<li><a href="#gaming">Gaming</a></li>
+				<li><a href="#install">Install</a></li>
+				<li><a href="#credits">Credits</a></li>
+			</ul>
+			<a class="btn btn-primary" href="https://github.com/vekrona/vekrona">View on GitHub</a>
+		</div>
+	</nav>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top" aria-labelledby="top-title">
+	<div class="container">
+		<div class="hero-copy">
+			<span class="eyebrow">Fedora 44 · Sway · DankMaterialShell</span>
+			<h1 id="top-title">vekrona</h1>
+			<p class="lede">Sway and DankMaterialShell on a Btrfs root that takes a snapshot before every dnf transaction, a keyboard that feels like macOS everywhere except your terminal, and Steam already wired in for when work is over.</p>
+			<ul class="hero-tags">
+				<li class="tag">Fedora Linux 44</li>
+				<li class="tag">Sway, tiling Wayland</li>
+				<li class="tag">Btrfs + snapper rollback</li>
+				<li class="tag">Hyper key + Cmd layer</li>
+				<li class="tag">Steam · ScopeBuddy · gamescope</li>
+			</ul>
+			<div class="btn-row">
+				<a class="btn btn-primary" href="https://github.com/vekrona/vekrona">View on GitHub</a>
+				<a class="btn btn-ghost" href="#install">See the install steps</a>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="hero-shot">
+			<picture>
+				<source type="image/avif" srcset="assets/img/hero-480.avif 480w, assets/img/hero-768.avif 768w, assets/img/hero-1280.avif 1280w, assets/img/hero.avif 1920w" sizes="(min-width: 70em) 1072px, calc(100vw - 48px)">
+				<img src="assets/img/hero-1280.webp" srcset="assets/img/hero-480.webp 480w, assets/img/hero-768.webp 768w, assets/img/hero-1280.webp 1280w, assets/img/hero.webp 1920w" sizes="(min-width: 70em) 1072px, calc(100vw - 48px)" width="1920" height="1080" alt="The vekrona desktop under the DankMaterialShell bar: btop system monitor tiled on the left, Firefox showing this site on the right" fetchpriority="high">
+			</picture>
+		</div>
+	</div>
+</section>
+
+<section id="overview" aria-labelledby="overview-title">
+	<div class="container">
+		<div class="section-head">
+			<h2 id="overview-title">What vekrona sets up</h2>
+		</div>
+		<div class="pillars">
+			<div class="pillar">
+				<h3>Snapshots and rollback</h3>
+				<p>Fedora Linux 44 on a Btrfs root. Snapper takes a pre and post snapshot around every <code>dnf</code> transaction, and a bad update is undone with <code>sudo vekrona-rollback 42</code> (42 being a snapshot number) instead of a reinstall.</p>
+			</div>
+			<div class="pillar">
+				<h3>Hyper key and Cmd shortcuts</h3>
+				<p>Caps Lock becomes a Hyper key. Outside your terminals, Super acts as a Cmd key, so Cmd+C, Cmd+Z and Cmd+Left work as they do on a Mac. Pressing both Alt keys switches between the two configured layouts.</p>
+			</div>
+			<div class="pillar">
+				<h3>Tiling desktop with Steam installed</h3>
+				<p>Sway tiles your windows. Steam, ScopeBuddy, gamescope, MangoHud and GameMode are installed, and the gamescope config is set to 3840×2160 at 240&nbsp;Hz, the monitor this recipe was written for. Other displays need that config edited; see Gaming.</p>
+			</div>
+			<div class="pillar">
+				<h3>No account needed to install</h3>
+				<p>The install asks you to sign up for nothing and creates only your local user. Chrome is not installed. YouTube, WhatsApp and Spotify run as Firefox webapps, and the shell is DankMaterialShell (DMS) on Quickshell.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="watch-title">
+	<div class="container">
+		<div class="section-head">
+			<h2 id="watch-title">Video tour, 61 seconds without sound</h2>
+			<p>Workspaces, the Spotlight launcher, the shell panels, a theme switch, the installer’s verify stage and the lock screen, back to back, recorded in a virtual machine.</p>
+		</div>
+		<div class="video-frame">
+			<video controls muted playsinline preload="metadata" poster="assets/video/poster.webp" width="1920" height="1080">
+				<source src="assets/video/vekrona-promo.webm" type="video/webm">
+				<source src="assets/video/vekrona-promo.mp4" type="video/mp4">
+				Your browser can’t play this video. <a href="assets/video/vekrona-promo.mp4">Download it instead</a>.
+			</video>
+		</div>
+		<p class="video-note">The video has no sound. Every scene carries its own on-screen caption, and the list below describes them in order.</p>
+		<details class="video-text">
+			<summary>Scene-by-scene description</summary>
+			<ol>
+				<li>Title card: “vekrona”, “Fedora + Sway + DankMaterialShell”.</li>
+				<li>The desktop with the bar on top; Hyper+2 switches to an empty workspace and Hyper+1 back. Caption: “Hyper + 1..0 — Sway workspaces, always visible”.</li>
+				<li>The Spotlight launcher opens. Caption: “Hyper + Space — Spotlight”.</li>
+				<li>The Control Center panel opens. Caption: “Hyper + , — Control Center”.</li>
+				<li>The notification center opens. Caption: “Hyper + N — Notifications”.</li>
+				<li>The clipboard history panel opens. Caption: “Hyper + V — Clipboard history”.</li>
+				<li>The keybindings help panel opens. Caption: “Hyper + / — Keybindings help”.</li>
+				<li>btop and a terminal change theme, one after another. Caption: “Hyper + Shift + T — Cycle themes”.</li>
+				<li>A terminal runs the installer’s verify stage and leaves out the NVIDIA stage. Caption: “./install.sh --skip 10-nvidia 70 — Verify stage”.</li>
+				<li>The lock screen: a password is typed and the session unlocks. Caption: “Hyper + Escape — Lock screen”.</li>
+				<li>End card: “github.com/vekrona/vekrona”, “Fedora 44 · Sway · DankMaterialShell”.</li>
+			</ol>
+		</details>
+	</div>
+</section>
+
+<section aria-labelledby="stability-title">
+	<div class="container">
+		<div class="feature feature-split">
+			<div>
+				<span class="eyebrow">Stability</span>
+				<h2 id="stability-title">Snapshots before every dnf transaction, and rollback</h2>
+				<div class="prose">
+					<p>Stage <code>20-snapper</code> assumes a Btrfs root. It installs snapper and the libdnf5 actions plugin, creates the snapper config for <code>/</code>, and enables the cleanup timer, which keeps the 10 most recent numbered snapshots. The plugin takes a pre and post snapshot around every <code>dnf</code> transaction. The stage also moves <code>/nix</code> onto its own subvolume, so a rollback leaves the Nix store alone.</p>
+					<p>It runs second, right after <code>00-repos</code> and before <code>10-nvidia</code>, so a snapshot exists before the driver is touched.</p>
+					<p>Before something riskier than an update, take a named snapshot yourself: <code>vekrona-snapshot "before the qt6 upgrade"</code> prints the snapshot number you’ll need if it goes wrong.</p>
+					<p>When it does go wrong: <code>sudo vekrona-rollback 42</code> mounts the top-level subvolume, makes that snapshot the new <code>root</code>, and renames the old one to <code>root.old-&lt;timestamp&gt;</code> instead of deleting it. First it warns about any kernel in <code>/boot</code> that has no matching modules in the snapshot, because a rollback never touches <code>/boot</code>. It does not reboot for you. To look inside a snapshot without committing to it, edit the <code>subvol=</code> value on the GRUB boot entry and boot it read-only; the edit is not saved.</p>
+				</div>
+			</div>
+			<figure class="shot">
+				<a href="assets/img/terminal-ops.webp">
+					<picture>
+						<source type="image/avif" srcset="assets/img/terminal-ops-480.avif 480w, assets/img/terminal-ops-768.avif 768w, assets/img/terminal-ops-1280.avif 1280w, assets/img/terminal-ops.avif 1920w" sizes="(min-width: 70em) 512px, (min-width: 56.25em) calc((100vw - 96px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/terminal-ops-768.webp" srcset="assets/img/terminal-ops-480.webp 480w, assets/img/terminal-ops-768.webp 768w, assets/img/terminal-ops-1280.webp 1280w, assets/img/terminal-ops.webp 1920w" sizes="(min-width: 70em) 512px, (min-width: 56.25em) calc((100vw - 96px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="Terminal showing vekrona-rollback --help, a vekrona-snapshot run, and colorized ./install.sh verify output" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption><code>vekrona-rollback --help</code>, a real snapshot, and a verify run, in one terminal.</figcaption>
+			</figure>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="keyboard-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Keyboard</span>
+			<h2 id="keyboard-title">Caps Lock as Hyper, Super as Cmd</h2>
+		</div>
+		<div class="prose">
+			<p>Held down, Caps Lock is Hyper (Ctrl+Alt+Super), the modifier for the window-management and launcher shortcuts on this desktop. Tapped alone within 300&nbsp;ms, it sends Esc. xremap does the remapping.</p>
+			<p>Outside your terminals, Super works as a Cmd key. Every Super+letter is sent to the app as the same letter with Ctrl, so Cmd+C copies and Cmd+Z undoes. Cmd+Left goes to the start of the line (the app receives Home), and Cmd+Backspace deletes to the start of the line (the app receives Shift+Home, then Backspace). In ghostty, foot and wezterm the Cmd layer is off, so Ctrl+C still reaches the shell as Ctrl+C. Only Alt+Left and Alt+Right are remapped there, to Ctrl+Left and Ctrl+Right, which readline reads as word movement.</p>
+			<p>Pressing both Alt keys together switches between the two keyboard layouts, us and ua.</p>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="hyper-title">
+	<div class="container">
+		<div class="feature feature-split">
+			<div>
+				<span class="eyebrow">Launcher</span>
+				<h2 id="hyper-title">Launcher, window and workspace shortcuts</h2>
+				<div class="prose">
+					<p>Hyper+Space opens Spotlight, the DankMaterialShell app launcher. Hyper+Enter opens a terminal (ghostty). Hyper+h/j/k/l or the arrow keys move focus; Hyper+1 through Hyper+0 switch workspaces; add Shift to move a window the same way instead of focusing it.</p>
+					<p>Hyper+/ opens a keybindings panel. It reads <code>~/.config/sway/config</code> each time it opens and lists every binding with the description written above it in that file, so the list matches what is bound.</p>
+				</div>
+			</div>
+			<div class="shots two">
+				<figure class="shot">
+					<a href="assets/img/spotlight.webp" data-avif="assets/img/spotlight.avif">
+						<picture>
+							<source type="image/avif" srcset="assets/img/spotlight-480.avif 480w, assets/img/spotlight-768.avif 768w, assets/img/spotlight-1280.avif 1280w, assets/img/spotlight.avif 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)">
+							<img src="assets/img/spotlight-768.webp" srcset="assets/img/spotlight-480.webp 480w, assets/img/spotlight-768.webp 768w, assets/img/spotlight-1280.webp 1280w, assets/img/spotlight.webp 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="The Spotlight app launcher open over the vekrona desktop" loading="lazy" decoding="async">
+						</picture>
+					</a>
+					<figcaption>Spotlight — Hyper+Space</figcaption>
+				</figure>
+				<figure class="shot">
+					<a href="assets/img/keybindings.webp" data-avif="assets/img/keybindings.avif">
+						<picture>
+							<source type="image/avif" srcset="assets/img/keybindings-480.avif 480w, assets/img/keybindings-768.avif 768w, assets/img/keybindings-1280.avif 1280w, assets/img/keybindings.avif 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)">
+							<img src="assets/img/keybindings-768.webp" srcset="assets/img/keybindings-480.webp 480w, assets/img/keybindings-768.webp 768w, assets/img/keybindings-1280.webp 1280w, assets/img/keybindings.webp 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="The built-in keybindings help panel: a scrollable list of Hyper shortcuts and what each one does" loading="lazy" decoding="async">
+						</picture>
+					</a>
+					<figcaption>Keybindings help — Hyper+/</figcaption>
+				</figure>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="panels-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Shell</span>
+			<h2 id="panels-title">Control Center, notifications and clipboard history</h2>
+			<p>These are DankMaterialShell panels running on Quickshell, each opened with a Hyper shortcut.</p>
+		</div>
+		<div class="gallery">
+			<figure class="shot">
+				<a href="assets/img/control-center.webp" data-avif="assets/img/control-center.avif">
+					<picture>
+						<source type="image/avif" srcset="assets/img/control-center-480.avif 480w, assets/img/control-center-768.avif 768w, assets/img/control-center-1280.avif 1280w, assets/img/control-center.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/control-center-768.webp" srcset="assets/img/control-center-480.webp 480w, assets/img/control-center-768.webp 768w, assets/img/control-center-1280.webp 1280w, assets/img/control-center.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="Control Center panel with the user card, a volume slider, and tiles for Ethernet, Bluetooth, audio devices, Night Mode and Dark Mode" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>Control Center — Hyper+, — network, Bluetooth, audio, night mode, dark mode</figcaption>
+			</figure>
+			<figure class="shot">
+				<a href="assets/img/notifications.webp" data-avif="assets/img/notifications.avif">
+					<picture>
+						<source type="image/avif" srcset="assets/img/notifications-480.avif 480w, assets/img/notifications-768.avif 768w, assets/img/notifications-1280.avif 1280w, assets/img/notifications.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/notifications-768.webp" srcset="assets/img/notifications-480.webp 480w, assets/img/notifications-768.webp 768w, assets/img/notifications-1280.webp 1280w, assets/img/notifications.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="Notification center open over the desktop, with the Current and History tabs and three notification cards" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>Notifications — Hyper+n</figcaption>
+			</figure>
+			<figure class="shot">
+				<a href="assets/img/clipboard.webp" data-avif="assets/img/clipboard.avif">
+					<picture>
+						<source type="image/avif" srcset="assets/img/clipboard-480.avif 480w, assets/img/clipboard-768.avif 768w, assets/img/clipboard-1280.avif 1280w, assets/img/clipboard.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/clipboard-768.webp" srcset="assets/img/clipboard-480.webp 480w, assets/img/clipboard-768.webp 768w, assets/img/clipboard-1280.webp 1280w, assets/img/clipboard.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="Clipboard history panel open over the desktop, with a search field above five copied text entries" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>Clipboard history — Hyper+v</figcaption>
+			</figure>
+		</div>
+	</div>
+</section>
+
+<section id="themes" aria-labelledby="themes-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Themes</span>
+			<h2 id="themes-title">Four themes: tokyo-night, catppuccin-mocha, gruvbox-dark, nord</h2>
+			<p><code>vekrona-theme next</code>, or Hyper+Shift+t, switches to the next theme. It changes the DMS colors, the wallpaper and the terminal colors together. Each theme maps to one of Ghostty’s built-in themes, and open Ghostty windows reload over D-Bus, so no restart is needed.</p>
+		</div>
+		<div class="gallery">
+			<figure class="shot">
+				<a href="assets/img/theme-tokyo-night.webp">
+					<picture>
+						<source type="image/avif" srcset="assets/img/theme-tokyo-night-480.avif 480w, assets/img/theme-tokyo-night-768.avif 768w, assets/img/theme-tokyo-night-1280.avif 1280w, assets/img/theme-tokyo-night.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/theme-tokyo-night-768.webp" srcset="assets/img/theme-tokyo-night-480.webp 480w, assets/img/theme-tokyo-night-768.webp 768w, assets/img/theme-tokyo-night-1280.webp 1280w, assets/img/theme-tokyo-night.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="btop and a terminal in the tokyo-night theme: blue-black background, with the terminal’s palette blocks in blue, violet and pink" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>tokyo-night</figcaption>
+			</figure>
+			<figure class="shot">
+				<a href="assets/img/theme-catppuccin-mocha.webp">
+					<picture>
+						<source type="image/avif" srcset="assets/img/theme-catppuccin-mocha-480.avif 480w, assets/img/theme-catppuccin-mocha-768.avif 768w, assets/img/theme-catppuccin-mocha-1280.avif 1280w, assets/img/theme-catppuccin-mocha.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/theme-catppuccin-mocha-768.webp" srcset="assets/img/theme-catppuccin-mocha-480.webp 480w, assets/img/theme-catppuccin-mocha-768.webp 768w, assets/img/theme-catppuccin-mocha-1280.webp 1280w, assets/img/theme-catppuccin-mocha.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="btop and a terminal in the catppuccin-mocha theme: dark grey-violet background, with the terminal’s palette blocks in soft pastel blue, lilac and pink" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>catppuccin-mocha</figcaption>
+			</figure>
+			<figure class="shot">
+				<a href="assets/img/theme-gruvbox-dark.webp">
+					<picture>
+						<source type="image/avif" srcset="assets/img/theme-gruvbox-dark-480.avif 480w, assets/img/theme-gruvbox-dark-768.avif 768w, assets/img/theme-gruvbox-dark-1280.avif 1280w, assets/img/theme-gruvbox-dark.avif 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)">
+						<img src="assets/img/theme-gruvbox-dark-768.webp" srcset="assets/img/theme-gruvbox-dark-480.webp 480w, assets/img/theme-gruvbox-dark-768.webp 768w, assets/img/theme-gruvbox-dark-1280.webp 1280w, assets/img/theme-gruvbox-dark.webp 1920w" sizes="(min-width: 70em) 342px, (min-width: 54.75em) calc((100vw - 96px) / 3), (min-width: 37em) calc((100vw - 72px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="btop and a terminal in the gruvbox-dark theme: warm charcoal background, with the terminal’s palette blocks in muted red, olive and orange" loading="lazy" decoding="async">
+					</picture>
+				</a>
+				<figcaption>gruvbox-dark</figcaption>
+			</figure>
+			<div class="swatch-card">
+				<strong>nord</strong>
+				The fourth built-in theme. Same layout as above, a cooler palette; not pictured here.
+			</div>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="security-title">
+	<div class="container">
+		<div class="feature feature-split">
+			<div>
+				<span class="eyebrow">Login &amp; lock</span>
+				<h2 id="security-title">Lock screen and login greeter</h2>
+				<div class="prose">
+					<p>Hyper+Esc locks the session with the DankMaterialShell lock screen. At boot, greetd runs tuigreet, a text-mode greeter, which starts Sway with <code>start-sway</code> after you log in. There is no GDM or SDDM.</p>
+					<p>The password always works. A security key or a fingerprint reader, enrolled in the ISO installer or later, adds a second way to sign in: the key works for sudo and on the lock screen, the reader for sudo.</p>
+				</div>
+			</div>
+			<div class="shots two">
+				<figure class="shot">
+					<a href="assets/img/lock.webp" data-avif="assets/img/lock.avif">
+						<picture>
+							<source type="image/avif" srcset="assets/img/lock-480.avif 480w, assets/img/lock-768.avif 768w, assets/img/lock-1280.avif 1280w, assets/img/lock.avif 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)">
+							<img src="assets/img/lock-768.webp" srcset="assets/img/lock-480.webp 480w, assets/img/lock-768.webp 768w, assets/img/lock-1280.webp 1280w, assets/img/lock.webp 1920w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)" width="1920" height="1080" alt="The lock screen on a dark background: a large clock, the date, and a password field" loading="lazy" decoding="async">
+						</picture>
+					</a>
+					<figcaption>Lock screen — Hyper+Esc</figcaption>
+				</figure>
+				<figure class="shot">
+					<a href="assets/img/greeter.webp">
+						<picture>
+							<source type="image/avif" srcset="assets/img/greeter-480.avif 480w, assets/img/greeter-768.avif 768w, assets/img/greeter.avif 1280w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)">
+							<img src="assets/img/greeter-768.webp" srcset="assets/img/greeter-480.webp 480w, assets/img/greeter-768.webp 768w, assets/img/greeter.webp 1280w" sizes="(min-width: 70em) 246px, (min-width: 56.25em) calc((100vw - 136px) / 4), (min-width: 38.75em) calc((100vw - 68px) / 2), calc(100vw - 48px)" width="1280" height="800" alt="The tuigreet login screen at boot" loading="lazy" decoding="async">
+						</picture>
+					</a>
+					<figcaption>tuigreet, at boot</figcaption>
+				</figure>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section id="gaming" aria-labelledby="gaming-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Gaming</span>
+			<h2 id="gaming-title">Gaming with Steam, ScopeBuddy and gamescope</h2>
+		</div>
+		<div class="prose">
+			<p>Steam comes from RPM Fusion. Stage <code>60-gaming</code> turns on Steam Play with <code>proton_experimental</code> for all titles. Set <code>scb -- %command%</code> as a game’s launch option and ScopeBuddy starts it inside gamescope, fullscreen at 3840×2160, 240&nbsp;Hz, with adaptive sync. Under NVIDIA, wlroots can flicker in fullscreen games, and running the game in gamescope keeps it out of wlroots’ compositing. MangoHud’s config binds Shift_R+F12 to toggle its overlay. GameMode is installed as well.</p>
+			<p>This recipe is built around one desktop: a Ryzen 7950X3D, an RTX 4090 and a Dell AW3225QF (4K, 240&nbsp;Hz) on output DP-7. Stage <code>10-nvidia</code> installs the NVIDIA driver and runs only when an NVIDIA GPU is present and the machine is not a Mac, so other hardware skips it on its own. On a different NVIDIA machine, read the stage first: it sets kernel arguments (<code>nvidia.NVreg_EnableGpuFirmware=0</code> and <code>pcie_aspm=off</code>) that were chosen on the RTX 4090. <code>./install.sh --skip 10-nvidia</code> leaves it out. Edit the <code>output</code> line in <code>config/sway/config</code> and the resolution and refresh rate in <code>config/scopebuddy/scb.conf</code> to match your monitor. Stage <code>15-mac</code> adds support for 2013–2015 MacBook Pros, but it has not been tested on real hardware. Everything else has only been tested on the author’s machine and in a VM.</p>
+		</div>
+		<ul class="chip-row">
+			<li class="chip">Steam</li>
+			<li class="chip">ScopeBuddy</li>
+			<li class="chip">gamescope</li>
+			<li class="chip">MangoHud</li>
+			<li class="chip">GameMode</li>
+		</ul>
+	</div>
+</section>
+
+<section id="install" aria-labelledby="install-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Install</span>
+			<h2 id="install-title">Install on Fedora 44: script or ISO</h2>
+		</div>
+		<div class="install-block">
+			<div class="install-card">
+				<h3>Fresh install on Fedora minimal</h3>
+				<div class="prose">
+					<p>Start from a Fedora 44 Everything netinstall with only <code>@core</code> selected: text console, no desktop. You need network access, a Btrfs root on a top-level subvolume named <code>root</code>, <code>/home</code> on a subvolume of the same filesystem, <code>/boot</code> on its own filesystem, and a user with sudo (<code>install.sh</code> refuses to run as root). That install has no git, so install it first:</p>
+				</div>
+<pre tabindex="0" aria-label="Install commands"><code>sudo dnf install -y git
+git clone https://github.com/vekrona/vekrona ~/wrk/vekrona
+cd ~/wrk/vekrona
+./install.sh</code></pre>
+				<div class="prose">
+					<p>Twelve idempotent stages can run, in this order; <code>./install.sh --list</code> prints the ones that apply to your machine. <code>10-nvidia</code> runs only with an NVIDIA GPU and not on a Mac, and <code>15-mac</code> only on Apple hardware. Reboot afterwards and log in through the greeter. If a run fails, run it again: stages only change what is still missing. <code>20-snapper</code> comes before <code>10-nvidia</code> so a snapshot exists before the driver install.</p>
+				</div>
+				<ol class="stage-list">
+					<li>00-repos</li>
+					<li>20-snapper</li>
+					<li>10-nvidia</li>
+					<li>15-mac</li>
+					<li>30-packages</li>
+					<li>40-system</li>
+					<li>45-auth</li>
+					<li>50-user</li>
+					<li>55-agents</li>
+					<li>60-gaming</li>
+					<li>65-login-manager</li>
+					<li>70-verify</li>
+				</ol>
+			</div>
+			<div class="install-card">
+				<h3>Install from ISO</h3>
+				<div class="prose">
+					<p><code>iso/build.sh</code> bakes the same repo into a Fedora 44 netinstall ISO with two extra installer screens. The first asks for your account (full name, username, host name) and time zone. The second asks for a password, which is both your login password and the disk encryption passphrase (Btrfs on LUKS2), so there is no second one to remember. It can also enroll a security key or a fingerprint reader.</p>
+					<p>Anaconda still handles disk selection and networking. On first boot the machine copies the checkout baked into the ISO to <code>~/vekrona</code>, runs <code>./install.sh</code> unattended and reboots into the same greetd login screen.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section aria-labelledby="privacy-title">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">Privacy</span>
+			<h2 id="privacy-title">Accounts, Chrome and what the installer does</h2>
+		</div>
+		<div class="prose">
+			<p>The install never asks you to sign up for anything: the one account it creates is your local Linux user. Steam, Spotify, WhatsApp, 1Password, Tailscale and the coding agents need their own accounts once you use them. Chrome isn’t installed. Firefox is, and YouTube, WhatsApp, and Spotify run as Firefox webapps in their own profiles (<code>vekrona-webapp youtube</code>, <code>vekrona-webapp whatsapp</code>, <code>vekrona-webapp spotify</code>). Spotify downloads Widevine’s DRM module on first launch, which is Spotify’s requirement, not vekrona’s. The installer is plain shell, one file per stage in <code>stages/</code>, so you can read what it does before you run it. vekrona doesn’t audit the packages it installs. This site loads no analytics script and requests nothing from other domains: its fonts are served from the same origin as the page.</p>
+		</div>
+	</div>
+</section>
+
+<section id="credits" aria-labelledby="credits-title">
+	<div class="container">
+		<div class="section-head">
+			<h2 id="credits-title">Credits: what vekrona is built on</h2>
+			<p>vekrona is a recipe, not a fork: it configures software that other people build and maintain. These are the main pieces it is built on. This site itself uses Atkinson Hyperlegible Next and JetBrains Mono, both under the SIL Open Font License.</p>
+		</div>
+		<div class="credits-groups">
+			<div class="credits-group">
+				<h3>Base</h3>
+				<ul>
+					<li><a href="https://fedoraproject.org">Fedora Linux</a></li>
+					<li><a href="https://rpmfusion.org">RPM Fusion / NVIDIA akmods</a></li>
+					<li><a href="https://github.com/patjak/facetimehd">facetimehd</a>, MacBook camera driver</li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Desktop</h3>
+				<ul>
+					<li><a href="https://swaywm.org">Sway</a></li>
+					<li><a href="https://gitlab.freedesktop.org/wlroots/wlroots">wlroots</a></li>
+					<li><a href="https://github.com/AvengeMedia/DankMaterialShell">DankMaterialShell</a></li>
+					<li><a href="https://github.com/quickshell-mirror/quickshell">Quickshell</a></li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Terminal &amp; keyboard</h3>
+				<ul>
+					<li><a href="https://ghostty.org">Ghostty</a></li>
+					<li><a href="https://github.com/xremap/xremap">xremap</a></li>
+					<li><a href="https://github.com/davatorium/rofi">rofi</a></li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Login &amp; filesystem</h3>
+				<ul>
+					<li><a href="https://sr.ht/~kennylevinsen/greetd/">greetd</a></li>
+					<li><a href="https://github.com/tuigreet/tuigreet">tuigreet</a></li>
+					<li><a href="https://btrfs.readthedocs.io/">Btrfs</a></li>
+					<li><a href="https://github.com/openSUSE/snapper">snapper</a></li>
+					<li><a href="https://github.com/Yubico/pam-u2f">pam-u2f</a></li>
+					<li><a href="https://fprint.freedesktop.org/">fprintd</a></li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Apps</h3>
+				<ul>
+					<li><a href="https://www.firefox.com/">Firefox</a></li>
+					<li><a href="https://zed.dev">Zed</a></li>
+					<li><a href="https://1password.com">1Password</a></li>
+					<li><a href="https://tailscale.com">Tailscale</a></li>
+					<li><a href="https://nixos.org">Nix</a></li>
+					<li><a href="https://www.jetify.com/devbox">devbox</a></li>
+					<li><a href="https://github.com/aristocratos/btop">btop</a></li>
+					<li><a href="https://herdr.dev/">herdr</a></li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Coding agents</h3>
+				<ul>
+					<li><a href="https://github.com/anthropics/claude-code">Claude Code</a></li>
+					<li><a href="https://github.com/openai/codex">Codex</a></li>
+					<li><a href="https://github.com/anomalyco/opencode">OpenCode</a></li>
+					<li><a href="https://github.com/earendil-works/pi">Pi</a></li>
+					<li><a href="https://cursor.com/cli">Cursor CLI</a></li>
+					<li><a href="https://mise.jdx.dev/">mise</a>, installs the last four</li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Gaming</h3>
+				<ul>
+					<li><a href="https://store.steampowered.com">Steam</a></li>
+					<li><a href="https://github.com/OpenGamingCollective/ScopeBuddy">ScopeBuddy</a></li>
+					<li><a href="https://github.com/ValveSoftware/gamescope">gamescope</a></li>
+					<li><a href="https://github.com/flightlessmango/MangoHud">MangoHud</a></li>
+					<li><a href="https://github.com/FeralInteractive/gamemode">GameMode</a></li>
+				</ul>
+			</div>
+			<div class="credits-group">
+				<h3>Type</h3>
+				<ul>
+					<li><a href="https://www.nerdfonts.com/">JetBrainsMono Nerd Font</a>, desktop monospace and terminal</li>
+					<li><a href="https://www.brailleinstitute.org/freefont/">Atkinson Hyperlegible Next</a>, desktop interface font</li>
+					<li><a href="https://rsms.me/inter/">Inter</a>, desktop fallback for Cyrillic</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+
+</main>
+
+<footer>
+	<div class="container footer-inner">
+		<span>vekrona is a personal Fedora desktop recipe, shared as-is.</span>
+		<a href="https://github.com/vekrona/vekrona">github.com/vekrona/vekrona</a>
+	</div>
+</footer>
+
+<script src="assets/js/site.js"></script>
 </body>
 </html>
