@@ -7,6 +7,14 @@ CYAN='\033[1;36m'
 MAGENTA='\033[1;35m'
 RESET='\033[0m'
 
+palette_row() {
+  local base="$1" color
+  for color in 0 1 2 3 4 5 6 7; do
+    printf '\033[%dm      \033[0m' "$((base + color))"
+  done
+  printf '\n'
+}
+
 printf '%b\n' "${CYAN}${BOLD}"
 cat <<'BANNER'
  __   __      _
@@ -24,4 +32,9 @@ printf '%b%-14s%b %s\n' "$MAGENTA" "Memory" "$RESET" "$(free -h | awk '/^Mem:/{p
 printf '%b%-14s%b %s\n' "$MAGENTA" "Disk (/)" "$RESET" "$(df -h / | awk 'NR==2{print $3 " / " $2 " (" $5 " used)"}')"
 printf '%b%-14s%b %s\n' "$MAGENTA" "Shell" "$RESET" "$SHELL"
 printf '\n'
-printf '%b%s%b\n' "$DIM" "github.com/vekrona/vekrona" "$RESET"
+printf '%b%s%b\n\n' "$DIM" "github.com/vekrona/vekrona" "$RESET"
+
+for base in 40 100; do
+  palette_row "$base"
+  palette_row "$base"
+done

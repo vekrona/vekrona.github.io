@@ -1,144 +1,126 @@
-#!/usr/bin/env bash
-set -euo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
-VEKRONA_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../vekrona" && pwd)"
-SITE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VEKRONA_REPO="$SITE_REPO/../vekrona"
 VM_MAKEFILE_DIR="$VEKRONA_REPO/vm"
 VM_NAME="${VM_NAME:-vekrona-test}"
 VM_USER="${VM_USER:-vekrona}"
+VM_PASSWORD="${VM_PASSWORD:-vekrona}"
 VM_HARNESS_KEY="$VM_MAKEFILE_DIR/.ssh/id_ed25519"
+LIBVIRT_URI=qemu:///system
+SCREEN_SIZE=1920x1080
 
-CAPTURE_DIR="$SITE_REPO/capture"
-OUT_DIR="$CAPTURE_DIR/out"
-ASSETS_IMG_DIR="$SITE_REPO/assets/img"
-ASSETS_VIDEO_DIR="$SITE_REPO/assets/video"
+[ -f "$VM_HARNESS_KEY" ] || fail "no harness SSH key at $VM_HARNESS_KEY (the sibling vekrona checkout with its vm/ harness is required)"
+require_commands virsh ssh scp make tar awk cut head sha256sum date mktemp magick ffmpeg ffprobe openssl certutil flock tesseract
 
-mkdir -p "$OUT_DIR" "$ASSETS_IMG_DIR" "$ASSETS_VIDEO_DIR"
+mkdir -p "$OUT_DIR" "$RAW_DIR" "$ASSETS_IMG_DIR" "$ASSETS_VIDEO_DIR"
 
-SSH_OPTS=(-F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none -i "$VM_HARNESS_KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null)
+SSH_OPTS=(-F /dev/null -o IdentitiesOnly=yes -o IdentityAgent=none -i "$VM_HARNESS_KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR)
 
 vm_ip() {
-  virsh -c qemu:///system domifaddr "$VM_NAME" --source lease 2>/dev/null \
-    | awk '/ipv4/{print $4}' | cut -d/ -f1 | head -1
+  local leases
+  leases="$(virsh -c "$LIBVIRT_URI" domifaddr "$VM_NAME" --source lease)" \
+    || { echo "lib.sh: virsh could not query domain '$VM_NAME' on $LIBVIRT_URI (wrong VM_NAME, libvirt not running, or no permission)" >&2; return 1; }
+  awk '/ipv4/{print $4}' <<<"$leases" | cut -d/ -f1 | head -1
 }
 
 VM_IP="$(vm_ip)"
-[[ -n "$VM_IP" ]] || { echo "capture/lib.sh: could not determine $VM_NAME's IPv4 address" >&2; exit 1; }
+[ -n "$VM_IP" ] || fail "domain '$VM_NAME' on $LIBVIRT_URI has no IPv4 lease (is it running and booted?)"
 
-REMOTE_PREAMBLE='
-set -euo pipefail
-export XDG_RUNTIME_DIR=/run/user/1000
-export WAYLAND_DISPLAY=wayland-1
-export SWAYSOCK="$(ls -t /run/user/1000/sway-ipc.*.sock 2>/dev/null | head -1)"
-[ -n "$SWAYSOCK" ] || { echo "no sway-ipc socket under /run/user/1000 (no graphical session logged in?)" >&2; exit 1; }
-
-wait_for() {
-  local desc="$1" timeout="$2"; shift 2
-  local waited=0 max=$((timeout * 5))
-  until "$@" >/dev/null 2>&1; do
-    waited=$((waited + 1))
-    [ "$waited" -lt "$max" ] || { echo "timed out after ${timeout}s waiting for: $desc" >&2; return 1; }
-    sleep 0.2
-  done
+vm_ssh() {
+  # shellcheck disable=SC2029
+  ssh "${SSH_OPTS[@]}" "$VM_USER@$VM_IP" "$@"
 }
 
-tree_has() {
-  swaymsg -t get_tree -r | jq -e "$1" >/dev/null 2>&1
-}
-
-window_count() {
-  swaymsg -t get_tree -r | jq "[.. | objects | select(.app_id? or .window_properties?.class?)] | length"
-}
-
-lock_status_field() {
-  dms ipc call lock status 2>/dev/null | jq -r ".$1" 2>/dev/null
-}
-
-settle() {
-  sleep "${1:-0.4}"
-}
-
-export -f wait_for tree_has window_count lock_status_field settle
-
-ensure_unlocked() {
-  [ "$(lock_status_field sessionLockLocked)" = "true" ] || return 0
-  dms ipc call lock unlock >/dev/null
-  wait_for "session unlock" 10 bash -c "[ \"\$(dms ipc call lock status | jq -r .sessionLockLocked)\" = false ]"
-}
-ensure_unlocked
-'
+# shellcheck disable=SC2016
+GUEST_SCRIPT_RUNNER='script="$(mktemp)" && cat >"$script" && { status=0; bash "$script" </dev/null || status=$?; rm -f "$script"; exit "$status"; }'
 
 vm_exec() {
-  { printf '%s\n' "$REMOTE_PREAMBLE"; cat; } | ssh "${SSH_OPTS[@]}" "$VM_USER@$VM_IP" bash -s
+  { cat "$CAPTURE_DIR/shared.sh" "$CAPTURE_DIR/remote.sh"; printf '\n'; cat; } | vm_ssh "$GUEST_SCRIPT_RUNNER"
+}
+
+guest_query() {
+  local status=0
+  vm_ssh "$@" || status=$?
+  if [ "$status" -gt 1 ]; then
+    echo "ssh to $VM_USER@$VM_IP failed (exit $status) while running: $*" >&2
+    return "$WAIT_FOR_ABORT_STATUS"
+  fi
+  return "$status"
 }
 
 vm_scp_from() {
-  local remote_path="$1" local_path="$2"
-  scp "${SSH_OPTS[@]}" "$VM_USER@$VM_IP:$remote_path" "$local_path" >/dev/null
+  scp "${SSH_OPTS[@]}" "$VM_USER@$VM_IP:$1" "$2" >/dev/null
 }
 
 vm_scp_to() {
-  local local_path="$1" remote_path="$2"
-  scp "${SSH_OPTS[@]}" "$local_path" "$VM_USER@$VM_IP:$remote_path" >/dev/null
-}
-
-vm_capture_png() {
-  local local_path="$1"
-  local remote_tmp
-  remote_tmp="/tmp/vekrona-capture-$$-$RANDOM.png"
-  vm_exec <<EOF
-grim "$remote_tmp"
-EOF
-  vm_scp_from "$remote_tmp" "$local_path"
-  vm_exec <<EOF
-rm -f "$remote_tmp"
-EOF
+  scp "${SSH_OPTS[@]}" "$1" "$VM_USER@$VM_IP:$2" >/dev/null
 }
 
 vm_make() {
-  make -C "$VM_MAKEFILE_DIR" VM_NAME="$VM_NAME" VM_USER="$VM_USER" "$@"
+  make --no-print-directory -C "$VM_MAKEFILE_DIR" VM_NAME="$VM_NAME" VM_USER="$VM_USER" "$@"
 }
 
 vm_type() {
-  vm_make type TEXT="$1"
+  if [ "$1" = " " ]; then
+    vm_key KEY_SPACE
+  else
+    vm_make type TEXT="$1" >/dev/null
+  fi
 }
 
 vm_key() {
-  vm_make key KEYS="$1"
+  vm_make key KEYS="$1" >/dev/null
 }
 
 vm_hyper_key() {
   vm_key "KEY_LEFTCTRL KEY_LEFTALT KEY_LEFTMETA $1"
 }
 
-settle() {
-  sleep "${1:-0.4}"
+vm_hyper_shift_key() {
+  vm_key "KEY_LEFTCTRL KEY_LEFTALT KEY_LEFTMETA KEY_LEFTSHIFT $1"
 }
 
-vm_record_start() {
-  local remote_path="$1"
-  vm_exec <<EOF
-rm -f "$remote_path" /tmp/vekrona-record.pid
-setsid wf-recorder -f "$remote_path" -g "0,0 1920x1080" -r 30 >/tmp/vekrona-record.log 2>&1 < /dev/null &
-disown
-echo \$! > /tmp/vekrona-record.pid
-wait_for "recording file to appear" 5 test -e /tmp/vekrona-record.pid
-EOF
+assert_media_size() {
+  local path="$1" size
+  size="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$path")" \
+    || { echo "$path is not a readable image or video" >&2; return 1; }
+  [ "$size" = "$SCREEN_SIZE" ] || { echo "$path is $size, expected $SCREEN_SIZE" >&2; return 1; }
 }
 
-vm_record_stop() {
-  vm_exec <<'EOF'
-pid="$(cat /tmp/vekrona-record.pid)"
-kill -INT "$pid"
-wait_for "recorder to exit" 10 bash -c "! kill -0 $pid 2>/dev/null"
-EOF
+move_checked_media() {
+  local partial="$1" final="$2"
+  if ! assert_media_size "$partial"; then
+    rm -f "$partial"
+    return 1
+  fi
+  publish_files "$partial" "$final"
+}
+
+vm_capture_png() {
+  local local_path="$1" partial="$1.partial"
+  if ! vm_exec <<<'grab_screen_png' >"$partial"; then
+    rm -f "$partial"
+    echo "could not grab the guest screen into $local_path" >&2
+    return 1
+  fi
+  move_checked_media "$partial" "$local_path"
+}
+
+vm_screenshot_ppm() {
+  virsh -c "$LIBVIRT_URI" screenshot "$VM_NAME" "$1" >/dev/null
 }
 
 vm_screenshot_ppm_to_png() {
-  local local_path="$1"
-  local tmp
-  tmp="$(mktemp --suffix=.ppm)"
-  virsh -c qemu:///system screenshot "$VM_NAME" "$tmp" >/dev/null
-  magick "$tmp" "$local_path"
-  rm -f "$tmp"
+  local local_path="$1" ppm="$HOST_TMP_DIR/screen.ppm"
+  vm_screenshot_ppm "$ppm"
+  magick "$ppm" "$local_path"
+}
+
+vm_record_start() {
+  vm_exec <<<'start_recording'
+}
+
+vm_record_stop() {
+  vm_exec <<<'stop_recording'
+  vm_scp_from "$REMOTE_DIR/clip.mp4" "$1" || { echo "could not copy the recording from the guest into $1" >&2; return 1; }
 }

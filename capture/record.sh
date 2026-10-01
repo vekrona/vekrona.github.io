@@ -1,22 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CAPTURE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+source "$CAPTURE_DIR/catalog.sh"
+validate_clip_names "$@"
+selected=("${@:-${CLIP_NAMES[@]}}")
 source "$CAPTURE_DIR/scenes.sh"
+require_clip_functions "${selected[@]}"
 
-capture_init
+run_step capture_init capture_init
 
-record_hero "$OUT_DIR/hero.mp4"
-record_spotlight "$OUT_DIR/spotlight.mp4"
-record_control_center "$OUT_DIR/control-center.mp4"
-record_notifications "$OUT_DIR/notifications.mp4"
-record_clipboard "$OUT_DIR/clipboard.mp4"
-record_keybindings "$OUT_DIR/keybindings.mp4"
-record_theme_cycle "$OUT_DIR/theme-cycle.mp4"
-record_terminal "$OUT_DIR/terminal.mp4"
-record_lock "$OUT_DIR/lock.mp4"
-
-close_all_windows
+for name in "${selected[@]}"; do
+  run_step "clip $name" record_clip "$name"
+done
 
 echo "clips recorded: $OUT_DIR"
-ls -la "$OUT_DIR"/*.mp4

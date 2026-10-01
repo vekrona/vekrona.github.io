@@ -1,0 +1,11 @@
+user_pref("browser.ipProtection.enabled", false);
+user_pref("app.normandy.enabled", false);
+user_pref("messaging-system.rsexperimentloader.enabled", false);
+user_pref("browser.shell.checkDefaultBrowser", false);
+user_pref("datareporting.policy.dataSubmissionEnabled", false);
+user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);
+user_pref("network.proxy.type", 1);
+user_pref("network.proxy.http", "127.0.0.1");
+user_pref("network.proxy.http_port", 9);
+user_pref("network.proxy.ssl", "127.0.0.1");
+user_pref("network.proxy.ssl_port", 9);
